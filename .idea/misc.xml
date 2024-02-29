@@ -3,7 +3,8 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/users/madhur/Apps/AndroidStudio/Projects/EDAI4/app/src/main/res/layout/activity_main.xml" value="0.152" />
+        <entry key="..\:/users/madhur/Apps/AndroidStudio/Projects/EDAI4/app/src/main/res/layout/activity_main.xml" value="0.12" />
+        <entry key="..\:/users/madhur/Apps/AndroidStudio/Projects/EDAI4/app/src/main/res/layout/activity_main_controller.xml" value="0.152" />
         <entry key="..\:/users/madhur/Apps/AndroidStudio/Projects/EDAI4/app/src/main/res/layout/activity_select_device.xml" value="0.20697463768115942" />
         <entry key="..\:/users/madhur/Apps/AndroidStudio/Projects/EDAI4/app/src/main/res/layout/activity_start.xml" value="0.144" />
         <entry key="..\:/users/madhur/Apps/AndroidStudio/Projects/EDAI4/app/src/main/res/layout/device_info_layout.xml" value="0.136" />

@@ -192,6 +192,16 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(MainActivity.this, cmdText, Toast.LENGTH_SHORT).show();
             }
         });
+
+
+        Button buttonControl = findViewById(R.id.buttonControl);
+        buttonControl.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, MainControllerActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void doPressRelease() {
