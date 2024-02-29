@@ -5,6 +5,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.View;
@@ -45,6 +46,9 @@ public class StartActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Toast.makeText(StartActivity.this, "Going to next activity!", Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(StartActivity.this, MainActivity.class);
+                startActivity(intent);
+                finish();
             }
         });
     }
