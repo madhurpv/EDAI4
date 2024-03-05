@@ -2,6 +2,7 @@ package com.mv.edai4;
 
 import static android.content.ContentValues.TAG;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
@@ -13,14 +14,17 @@ import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -43,6 +47,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 
+import top.defaults.colorpicker.ColorPickerView;
+
 public class MainActivity extends AppCompatActivity {
 
     private String deviceName = null;
@@ -59,6 +65,12 @@ public class MainActivity extends AppCompatActivity {
 
     boolean isPressed;
 
+    public static TextView measuredValuesTextView;
+    public static String measuredValuesString;
+    public static View colourDisplayView;
+    ColorPickerView colourPicker;
+    Button measureButton;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -73,6 +85,34 @@ public class MainActivity extends AppCompatActivity {
         final Button buttonToggle = findViewById(R.id.buttonToggle);
         textinputInstruction = findViewById(R.id.text_input_instructions);
         buttonToggle.setEnabled(false);
+
+
+        measuredValuesTextView = findViewById(R.id.measuredValuesTextView);
+        colourDisplayView = findViewById(R.id.colourDisplayView);
+        colourPicker = findViewById(R.id.colourPicker);
+        measureButton = findViewById(R.id.measureButton);
+
+        measureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                connectedThread.write("C");
+            }
+        });
+
+        colourPicker.subscribe((color, fromUser, shouldPropagate) -> {
+            colourDisplayView.setBackgroundColor(color);
+            measuredValuesTextView.setText("Measured Values : (" + Color.red(color) + ", " + Color.green(color) + ", "  + Color.blue(color) + ")");
+
+            float[] hsv = new float[3];
+            Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv);
+            //Log.d("QWER", "HSV : " + Arrays.toString(hsv));
+            hsv[1] = hsv[1]/8;
+            getWindow().setStatusBarColor(Color.HSVToColor(hsv));
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setBackgroundDrawable(new ColorDrawable(Color.HSVToColor(hsv)));
+            }
+        });
 
 
         View viewColour = new View((getApplicationContext()));
@@ -97,6 +137,7 @@ public class MainActivity extends AppCompatActivity {
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             createConnectThread = new CreateConnectThread(bluetoothAdapter, deviceAddress);
             createConnectThread.start();
+
         }
 
         /*
@@ -188,6 +229,7 @@ public class MainActivity extends AppCompatActivity {
                 }
                 // Send command to Arduino board
                 connectedThread.write(cmdText);
+                //connectedThread.run();
                 Toast.makeText(MainActivity.this, "Submitted", Toast.LENGTH_SHORT).show();
                 Toast.makeText(MainActivity.this, cmdText, Toast.LENGTH_SHORT).show();
             }
@@ -198,11 +240,117 @@ public class MainActivity extends AppCompatActivity {
         buttonControl.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, MainControllerActivity.class);
-                startActivity(intent);
+                /*Intent intent = new Intent(MainActivity.this, MainControllerActivity.class);
+                intent.putExtra("deviceAddress", deviceAddress);
+                startActivity(intent);*/
+
+                showCustomDialog(MainActivity.this);
+
+
             }
         });
+
+
     }
+
+
+    public void showCustomDialog(Context context) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
+        View customView = LayoutInflater.from(context).inflate(R.layout.popup_controller, null);
+        builder.setView(customView);
+
+        /*measuredValuesTextView = customView.findViewById(R.id.measuredValuesTextView);
+        colourDisplayView = customView.findViewById(R.id.colourDisplayView);
+        colourPicker = customView.findViewById(R.id.colourPicker);
+        Button measureButton = customView.findViewById(R.id.measureButton);
+        measureButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                connectedThread.write("C");
+            }
+        });
+
+        //measuredValuesTextView.setText(measuredValuesString);
+
+        colourPicker.subscribe((color, fromUser, shouldPropagate) -> {
+            colourDisplayView.setBackgroundColor(color);
+            measuredValuesTextView.setText("Measured Values : (" + Color.red(color) + ", " + Color.green(color) + ", "  + Color.blue(color) + ")");
+
+            float[] hsv = new float[3];
+            Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv);
+            //Log.d("QWER", "HSV : " + Arrays.toString(hsv));
+            hsv[1] = hsv[1]/8;
+            getWindow().setStatusBarColor(Color.HSVToColor(hsv));
+            ActionBar actionBar = getSupportActionBar();
+            if (actionBar != null) {
+                actionBar.setBackgroundDrawable(new ColorDrawable(Color.HSVToColor(hsv)));
+            }
+        });*/
+
+        // Set any additional properties for the dialog (e.g., title)
+        //builder.setTitle("Custom Dialog");
+
+        // Find views within the custom layout
+        /*TextView textViewMessage = customView.findViewById(R.id.textViewMessage);
+        Button buttonClose = customView.findViewById(R.id.buttonClose);*/
+
+        // Set text for the message
+        /*textViewMessage.setText("Hello from custom dialog!");
+
+        // Set OnClickListener for the Close button
+        buttonClose.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Close the dialog
+                dialog.dismiss();
+            }
+        });*/
+
+        // Create and show the dialog
+        AlertDialog dialog = builder.create();
+        dialog.show();
+
+
+        /*if (createConnectThread.isAlive() == false) {
+            createConnectThread.start();
+        }*/
+
+
+        final Handler handler = new Handler();
+        final int delay = 1000; // 1000 milliseconds == 1 second
+
+        handler.postDelayed(new Runnable() {
+            public void run() {
+                System.out.println("myHandler: here!"); // Do your work here
+
+                handler.postDelayed(this, delay);
+            }
+        }, delay);
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     private void doPressRelease() {
         isPressed = false;
@@ -306,7 +454,7 @@ public class MainActivity extends AppCompatActivity {
             // The connection attempt succeeded. Perform work associated with
             // the connection in a separate thread.
             connectedThread = new ConnectedThread(mmSocket);
-            connectedThread.run();
+            connectedThread.run(MainActivity.measuredValuesTextView, MainActivity.colourDisplayView);
         }
 
         // Closes the client socket and causes the thread to finish.
@@ -341,7 +489,7 @@ public class MainActivity extends AppCompatActivity {
             mmOutStream = tmpOut;
         }
 
-        public void run() {
+        public void run(TextView measuredValuesTextView, View colourDisplayView) {
             byte[] buffer = new byte[1024];  // buffer store for the stream
             int bytes = 0; // bytes returned from read()
             // Keep listening to the InputStream until an exception occurs
@@ -355,9 +503,34 @@ public class MainActivity extends AppCompatActivity {
                     String readMessage;
                     if (buffer[bytes] == '\n'){
                         readMessage = new String(buffer,0,bytes);
-                        Log.e("Arduino Message",readMessage);
+                        Log.e("Arduino Message", readMessage);
+                        String[] colourValues = readMessage.split("\\|");
+                        int rgb = Integer.parseInt(colourValues[0]);
+                        rgb = (rgb << 8) + Integer.parseInt(colourValues[1]);
+                        rgb = (rgb << 8) + Integer.parseInt(colourValues[2]);
+                        //SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref",MODE_PRIVATE);
+                        measuredValuesString = "Measured Value : " + readMessage;
+                        try{
+                            int finalRgb = rgb;
+                            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                                @Override
+                                public void run() {
+                                    //do stuff like remove view etc
+                                    measuredValuesTextView.setText(measuredValuesString);
+                                    colourDisplayView.setBackgroundColor(finalRgb);
+                                    Log.e("QWER", "Values written");
+                                }
+                            });
+
+                        } catch (Exception e) {
+                            Log.e("QWER", "Error in writing!!");
+                            e.printStackTrace();
+                        }
+
+
                         handler.obtainMessage(MESSAGE_READ,readMessage).sendToTarget();
                         bytes = 0;
+                        //break;
                     } else {
                         bytes++;
                     }
