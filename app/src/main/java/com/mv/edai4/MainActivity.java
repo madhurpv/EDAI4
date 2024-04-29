@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.AsyncTask;
@@ -23,6 +24,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -31,6 +33,8 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -51,6 +55,8 @@ import top.defaults.colorpicker.ColorPickerView;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final int pic_id = 123;
+
     private String deviceName = null;
     private String deviceAddress;
     public static Handler handler;
@@ -70,6 +76,7 @@ public class MainActivity extends AppCompatActivity {
     public static View colourDisplayView;
     ColorPickerView colourPicker;
     Button measureButton;
+    FloatingActionButton floatingActionButtonOpenCamera;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -112,6 +119,18 @@ public class MainActivity extends AppCompatActivity {
             if (actionBar != null) {
                 actionBar.setBackgroundDrawable(new ColorDrawable(Color.HSVToColor(hsv)));
             }
+
+            try {
+                connectedThread.write("R" + Color.red(color));
+                Thread.sleep(100);
+                connectedThread.write("G" + Color.green(color));
+                Thread.sleep(100);
+                connectedThread.write("B" + Color.blue(color));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+
         });
 
 
@@ -251,6 +270,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        floatingActionButtonOpenCamera = findViewById(R.id.floatingActionButtonOpenCamera);
+        floatingActionButtonOpenCamera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                startActivityForResult(camera_intent, pic_id);
+            }
+        });
+
+
     }
 
 
@@ -334,6 +363,48 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        // Match the request 'pic id with requestCode
+        if (requestCode == pic_id) {
+            // BitMap is data structure of image file which store the image in memory
+            Bitmap photo = (Bitmap) data.getExtras().get("data");
+            // Set the image in imageview for display
+            //click_image_id.setImageBitmap(photo);
+            int avgColour = getAverageColour(photo);
+            Toast.makeText(this, Color.red(avgColour) + "," + Color.green(avgColour) + "," + Color.blue(avgColour), Toast.LENGTH_SHORT).show();
+            colourDisplayView.setBackgroundColor(avgColour);
+            colourPicker.setInitialColor(avgColour);
+        }
+    }
+
+
+    public int getAverageColour(Bitmap bitmap) {
+        long redBucket = 0;
+        long greenBucket = 0;
+        long blueBucket = 0;
+        long pixelCount = 0;
+
+        for (int y = 0; y < bitmap.getHeight(); y++) {
+            for (int x = 0; x < bitmap.getWidth(); x++) {
+                int c = bitmap.getPixel(x, y);
+
+                pixelCount++;
+                redBucket += Color.red(c);
+                greenBucket += Color.green(c);
+                blueBucket += Color.blue(c);
+            }
+        }
+
+        // Calculate average colors
+        int averageRed = (int)(redBucket / pixelCount);
+        int averageGreen = (int)(greenBucket / pixelCount);
+        int averageBlue = (int)(blueBucket / pixelCount);
+
+        // Return the average color as an integer
+        return Color.rgb(averageRed, averageGreen, averageBlue);
+    }
 
 
 
@@ -423,8 +494,7 @@ public class MainActivity extends AppCompatActivity {
             // Cancel discovery because it otherwise slows down the connection.
             BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
             if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.BLUETOOTH_SCAN) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
+
                 // here to request the missing permissions, and then overriding
                 //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
                 //                                          int[] grantResults)
@@ -505,7 +575,7 @@ public class MainActivity extends AppCompatActivity {
                         readMessage = new String(buffer,0,bytes);
                         Log.e("Arduino Message", readMessage);
                         String[] colourValues = readMessage.split("\\|");
-                        int rgb = Integer.parseInt(colourValues[0]);
+                        int rgb = 0xFF<<8 + Integer.parseInt(colourValues[0]);
                         rgb = (rgb << 8) + Integer.parseInt(colourValues[1]);
                         rgb = (rgb << 8) + Integer.parseInt(colourValues[2]);
                         //SharedPreferences sharedPreferences = getSharedPreferences("MySharedPref",MODE_PRIVATE);
@@ -518,6 +588,7 @@ public class MainActivity extends AppCompatActivity {
                                     //do stuff like remove view etc
                                     measuredValuesTextView.setText(measuredValuesString);
                                     colourDisplayView.setBackgroundColor(finalRgb);
+                                    colourDisplayView.setBackgroundColor(Color.rgb(Integer.parseInt(colourValues[0]), Integer.parseInt(colourValues[1]), Integer.parseInt(colourValues[2])));
                                     Log.e("QWER", "Values written");
                                 }
                             });
@@ -563,7 +634,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         // Terminate Bluetooth Connection and close app
-        if (createConnectThread != null){
+        super.onBackPressed();
+        if (createConnectThread != null) {
             createConnectThread.cancel();
         }
         Intent a = new Intent(Intent.ACTION_MAIN);

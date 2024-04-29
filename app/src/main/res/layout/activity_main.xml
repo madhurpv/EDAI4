@@ -103,16 +103,13 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonToggle" />
 
 
-
     <androidx.cardview.widget.CardView
         android:id="@+id/cardView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="90dp"
+        app:cardBackgroundColor="#FFFFFF"
         app:cardCornerRadius="50dp"
         app:cardElevation="15dp"
-        app:cardBackgroundColor="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/buttonControl">
@@ -137,9 +134,9 @@
                 android:id="@+id/colourPicker"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="170dp"
+                android:layout_marginStart="120dp"
                 android:layout_marginTop="8dp"
-                android:layout_marginEnd="170dp"
+                android:layout_marginEnd="120dp"
                 app:enableBrightness="true"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintLeft_toLeftOf="parent"
@@ -151,10 +148,10 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
-                android:text="Measure"
                 android:backgroundTint="#555555"
                 android:elevation="15dp"
                 android:fontFamily="@font/almendra_sc"
+                android:text="Measure"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/colourPicker" />
@@ -165,13 +162,24 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="1dp"
-                android:text="Measured Values : (255,255,255)"
-                android:textSize="12sp"
                 android:fontFamily="@font/almendra_sc"
+                android:text="Measured Values : (255,255,255)"
                 android:textColor="#858585"
+                android:textSize="12sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/measureButton" />
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/floatingActionButtonOpenCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="28dp"
+                android:layout_marginBottom="12dp"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:srcCompat="@drawable/ic_baseline_camera_enhance_24" />
 
 
         </androidx.constraintlayout.widget.ConstraintLayout>
