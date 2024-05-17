@@ -106,12 +106,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        colourPicker.subscribe((color, fromUser, shouldPropagate) -> {
-            colourDisplayView.setBackgroundColor(color);
-            measuredValuesTextView.setText("Measured Values : (" + Color.red(color) + ", " + Color.green(color) + ", "  + Color.blue(color) + ")");
+        colourPicker.subscribe((colour, fromUser, shouldPropagate) -> {
+            colourDisplayView.setBackgroundColor(colour);
+            measuredValuesTextView.setText("Measured Values : (" + Color.red(colour) + ", " + Color.green(colour) + ", "  + Color.blue(colour) + ")");
 
             float[] hsv = new float[3];
-            Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv);
+            Color.RGBToHSV(Color.red(colour), Color.green(colour), Color.blue(colour), hsv);
             //Log.d("QWER", "HSV : " + Arrays.toString(hsv));
             hsv[1] = hsv[1]/8;
             getWindow().setStatusBarColor(Color.HSVToColor(hsv));
@@ -120,12 +120,13 @@ public class MainActivity extends AppCompatActivity {
                 actionBar.setBackgroundDrawable(new ColorDrawable(Color.HSVToColor(hsv)));
             }
 
+            convert_colour(colour);
             try {
-                connectedThread.write("R" + Color.red(color));
+                connectedThread.write("R" + Color.red(colour));
                 Thread.sleep(200);
-                connectedThread.write("G" + Color.green(color));
+                connectedThread.write("G" + Color.green(colour));
                 Thread.sleep(200);
-                connectedThread.write("B" + Color.blue(color));
+                connectedThread.write("B" + Color.blue(colour));
                 Thread.sleep(200);
             } catch (Exception e) {
                 Toast.makeText(this, "Error in sending!", Toast.LENGTH_SHORT).show();
@@ -414,13 +415,30 @@ public class MainActivity extends AppCompatActivity {
         char return_colour = 'r';
         float[] hsv = new float[3];
         Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv);
+        //Toast.makeText(this, "HSV = (" + hsv[0] + "," + hsv[1] + "," + hsv[2] +")", Toast.LENGTH_SHORT).show();
         float hue = hsv[0];
-        if(hue>=0 && hue <=0.1){ // Red
+        if(hue>=0 && hue <=36){ // Red
             return_colour = 'r';
         }
-        else if(hue>=0.1 && hue <=0.2){ // Yellow
+        else if(hue>=36 && hue <=72){ // Yellow
             return_colour = 'y';
         }
+        else if(hue>=72 && hue <=154.8){ // Green
+            return_colour = 'g';
+        }
+        else if(hue>=154.8 && hue <=198){ // Light Blue
+            return_colour = 'l';
+        }
+        else if(hue>=198 && hue <=266){ // Blue
+            return_colour = 'b';
+        }
+        else if(hue>=266 && hue <=316){ // Pink
+            return_colour = 'p';
+        }
+        else if(hue>=316 && hue <=360){ // Red
+            return_colour = 'r';
+        }
+        Toast.makeText(this, "Colour : " + return_colour, Toast.LENGTH_SHORT).show();
         return return_colour;
     }
 
