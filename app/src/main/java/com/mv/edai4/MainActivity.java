@@ -410,6 +410,19 @@ public class MainActivity extends AppCompatActivity {
 
 
 
+    public char convert_colour(int color){
+        char return_colour = 'r';
+        float[] hsv = new float[3];
+        Color.RGBToHSV(Color.red(color), Color.green(color), Color.blue(color), hsv);
+        float hue = hsv[0];
+        if(hue>=0 && hue <=0.1){ // Red
+            return_colour = 'r';
+        }
+        else if(hue>=0.1 && hue <=0.2){ // Yellow
+            return_colour = 'y';
+        }
+        return return_colour;
+    }
 
 
 
