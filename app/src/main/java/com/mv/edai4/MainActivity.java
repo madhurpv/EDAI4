@@ -122,11 +122,13 @@ public class MainActivity extends AppCompatActivity {
 
             try {
                 connectedThread.write("R" + Color.red(color));
-                Thread.sleep(100);
+                Thread.sleep(200);
                 connectedThread.write("G" + Color.green(color));
-                Thread.sleep(100);
+                Thread.sleep(200);
                 connectedThread.write("B" + Color.blue(color));
+                Thread.sleep(200);
             } catch (Exception e) {
+                Toast.makeText(this, "Error in sending!", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
