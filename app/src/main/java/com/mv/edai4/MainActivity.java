@@ -102,7 +102,13 @@ public class MainActivity extends AppCompatActivity {
         measureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                connectedThread.write("C");
+                try{
+                    connectedThread.write("C");
+                    Toast.makeText(MainActivity.this, "C", Toast.LENGTH_SHORT).show();
+                } catch (Exception e){
+                    e.printStackTrace();
+                    Toast.makeText(MainActivity.this, "Error!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
@@ -120,14 +126,15 @@ public class MainActivity extends AppCompatActivity {
                 actionBar.setBackgroundDrawable(new ColorDrawable(Color.HSVToColor(hsv)));
             }
 
-            convert_colour(colour);
+            char colour_char = convert_colour(colour);
             try {
-                connectedThread.write("R" + Color.red(colour));
+                /*connectedThread.write("R" + Color.red(colour));
                 Thread.sleep(200);
                 connectedThread.write("G" + Color.green(colour));
                 Thread.sleep(200);
                 connectedThread.write("B" + Color.blue(colour));
-                Thread.sleep(200);
+                Thread.sleep(200);*/
+                connectedThread.write(String.valueOf(colour_char));
             } catch (Exception e) {
                 Toast.makeText(this, "Error in sending!", Toast.LENGTH_SHORT).show();
                 e.printStackTrace();

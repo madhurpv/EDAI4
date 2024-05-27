@@ -60,8 +60,8 @@ public class StartActivity extends AppCompatActivity {
         // title, then color of background is passed ,
         // then the image to show on the screen is passed
         // and at last icon to navigate from one screen to other
-        PaperOnboardingPage source = new PaperOnboardingPage("Welcome", "Use our app!", Color.parseColor("#ffb174"),R.drawable.ic_baseline_rss_feed_24, R.drawable.ic_baseline_rss_feed_24);
-        PaperOnboardingPage source1 = new PaperOnboardingPage("Ambient Colour Correcter", "Extremely accurate Ambient Colour Corrector!", Color.parseColor("#22eaaa"),R.drawable.ic_baseline_control_camera_24, R.drawable.ic_baseline_control_camera_24);
+        PaperOnboardingPage source = new PaperOnboardingPage("Welcome", "Welcome to our app!", Color.parseColor("#ffb174"),R.drawable.ic_baseline_rss_feed_24, R.drawable.ic_baseline_rss_feed_24);
+        PaperOnboardingPage source1 = new PaperOnboardingPage("Ambient Colour Correcter", "Accurate and Useful Ambient Colour Corrector!", Color.parseColor("#22eaaa"),R.drawable.ic_baseline_control_camera_24, R.drawable.ic_baseline_control_camera_24);
         PaperOnboardingPage source2 = new PaperOnboardingPage("Start!", " ", Color.parseColor("#ee5a5a"),R.drawable.ic_baseline_verified_user_24, R.drawable.ic_baseline_verified_user_24);
 
         // array list is used to store
