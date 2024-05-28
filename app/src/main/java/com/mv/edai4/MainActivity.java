@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
                 // Send command to Arduino board
                 connectedThread.write(cmdText);
                 //connectedThread.run();
-                Toast.makeText(MainActivity.this, "Submitted", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(MainActivity.this, "Submitted", Toast.LENGTH_SHORT).show();
                 Toast.makeText(MainActivity.this, cmdText, Toast.LENGTH_SHORT).show();
             }
         });
